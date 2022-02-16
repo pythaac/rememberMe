@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, Button, StyleSheet, Alert, ScrollView} from 'react-native';
-import { DateTimePickerModal } from "react-native-modal-datetime-picker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import messaging from 'react-native-firebase/messaging'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const App = () => {
+    const MAMACOCO = 'http://192.168.1.3:8080'
+    const REMEMBERME = 'http://192.168.1.3:9999'
+
     const main = 1;
     const addPushCat = 2;
     const addPushTime = 3;
@@ -18,14 +23,15 @@ const App = () => {
             <Button
                 onPress={() => setCurrentView(addPushCat)}
                 title="Create Push"/>
+            <Button
+                onPress={() => Alert.alert(getLocalToken())}
+                title="Show Token"/>
         </View>
     )
 
     const AddPushCat = () => {
-        const MAMACOCO = '172.30.1.60'
-
         const getCategoryList = () => {
-            fetch(`http://${MAMACOCO}:8080/rememberMe/categories`)
+            fetch(`${MAMACOCO}/rememberMe/categories`)
                 .then(response => response.text())
                 .then(response => response.slice(2, -2))
                 .then(response => response.split("\",\""))
@@ -96,11 +102,26 @@ const App = () => {
                 Alert.alert("시간을 선택해주세요")
             }
             else {
-                Alert.alert(
-                    "전송되었습니다")
-                setAddCat("null")
-                setAddTime("null")
-                setCurrentView(main)
+                const sending = JSON.stringify({
+                    'category': addCat,
+                    'time': addTime
+                })
+
+                {
+                    fetch(REMEMBERME+"/register", {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: sending
+                    })
+                        .then(() => Alert.alert("전송되었습니다"))
+                        .then(() => setAddCat("null"))
+                        .then(() => setAddTime("null"))
+                        .then(() => setCurrentView(main))
+                        .catch(e => Alert.alert("에러 : " + e))
+                }
             }
         }
 
@@ -130,6 +151,46 @@ const App = () => {
             </View>
         );
     }
+
+    // Firebase
+    // const foregroundLIstener = useCallback(() => {
+    //     messaging().onMessage(async message => {
+    //         console.log(message)
+    //     })
+    // }, [])
+    //
+    // const isPermitted = useCallback(async () =>
+    //     await messaging().hasPermission() || await messaging().requestPermission()
+    //     , [])
+    //
+    // const getLocalToken = useCallback(async () =>
+    //     await AsyncStorage.getItem("tokenFCM")
+    //     , []
+    // )
+    //
+    // const setLocalToken = useCallback(async (token) =>
+    //     await AsyncStorage.setItem("tokenFCM", token)
+    //     , []
+    // )
+    //
+    // const checkToken = useCallback(async () => {
+    //     if (!await isPermitted())
+    //         throw Error("FCM: Permission denied")
+    //     if (!await getLocalToken()){
+    //         const token = await messaging().getToken()
+    //         if (!token)
+    //             throw Error("FCM: getToken() error")
+    //         const e = await setLocalToken(token)
+    //         if (e)
+    //             throw Error("FCM: Save token error(" + e + ")")
+    //     }
+    //     console.log(getLocalToken())
+    // })
+    //
+    // useEffect(() => {
+    //     foregroundLIstener()
+    //     checkToken()
+    // }, [])
 
     return(
         <View style={styles.container}>
