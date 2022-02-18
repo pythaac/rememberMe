@@ -1,8 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, Button, StyleSheet, Alert, ScrollView} from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import messaging from 'react-native-firebase/messaging'
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import messaging from '@react-native-firebase/messaging'
 
 const App = () => {
     const MAMACOCO = 'http://192.168.1.3:8080'
@@ -17,6 +16,7 @@ const App = () => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [addCat, setAddCat] = useState("null")
     const [addTime, setAddTime] = useState("null")
+    const [token, setToken] = useState(null)
 
     const Main = () => (
         <View style={styles.container}>
@@ -24,7 +24,7 @@ const App = () => {
                 onPress={() => setCurrentView(addPushCat)}
                 title="Create Push"/>
             <Button
-                onPress={() => Alert.alert(getLocalToken())}
+                onPress={() => Alert.alert(token)}
                 title="Show Token"/>
         </View>
     )
@@ -153,44 +153,43 @@ const App = () => {
     }
 
     // Firebase
-    // const foregroundLIstener = useCallback(() => {
-    //     messaging().onMessage(async message => {
-    //         console.log(message)
-    //     })
-    // }, [])
-    //
-    // const isPermitted = useCallback(async () =>
-    //     await messaging().hasPermission() || await messaging().requestPermission()
-    //     , [])
-    //
-    // const getLocalToken = useCallback(async () =>
-    //     await AsyncStorage.getItem("tokenFCM")
-    //     , []
-    // )
-    //
-    // const setLocalToken = useCallback(async (token) =>
-    //     await AsyncStorage.setItem("tokenFCM", token)
-    //     , []
-    // )
-    //
-    // const checkToken = useCallback(async () => {
-    //     if (!await isPermitted())
-    //         throw Error("FCM: Permission denied")
-    //     if (!await getLocalToken()){
-    //         const token = await messaging().getToken()
-    //         if (!token)
-    //             throw Error("FCM: getToken() error")
-    //         const e = await setLocalToken(token)
-    //         if (e)
-    //             throw Error("FCM: Save token error(" + e + ")")
-    //     }
-    //     console.log(getLocalToken())
-    // })
-    //
-    // useEffect(() => {
-    //     foregroundLIstener()
-    //     checkToken()
-    // }, [])
+    const foregroundListener = useCallback(() => {
+        messaging().onMessage(async message => {
+            Alert.alert(message)
+        })
+    }, [])
+
+    const isPermitted = useCallback(async () =>
+        await messaging().hasPermission() || await messaging().requestPermission()
+        , [])
+
+    const getLocalToken = useCallback(async () => {
+        console.log(token)
+        return token
+    }, [])
+
+    const setLocalToken = useCallback(async (token) =>
+        setToken(token)
+        , []
+    )
+
+    const checkToken = useCallback(async () => {
+        if (!await isPermitted())
+            throw Error("FCM: Permission denied")
+        else if (!await getLocalToken()){
+            const token = await messaging().getToken()
+            if (!token)
+                throw Error("FCM: getToken() error")
+            const e = await setLocalToken(token)
+            if (e)
+                throw Error("FCM: Save token error(" + e + ")")
+        }
+    })
+
+    useEffect(() => {
+        foregroundListener()
+        checkToken()
+    }, [])
 
     return(
         <View style={styles.container}>
