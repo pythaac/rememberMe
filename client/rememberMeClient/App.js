@@ -1,33 +1,34 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, Button, StyleSheet, Alert, ScrollView} from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import messaging from '@react-native-firebase/messaging'
+import messaging, {firebase} from '@react-native-firebase/messaging'
 
 const App = () => {
-    const MAMACOCO = 'http://192.168.1.3:8080'
-    const REMEMBERME = 'http://192.168.1.3:9999'
+    const MAMACOCO = 'http://192.168.1.3:8080';
+    const REMEMBERME = 'http://192.168.1.3:9999';
 
     const main = 1;
     const addPushCat = 2;
     const addPushTime = 3;
 
-    const [currentView, setCurrentView] = useState(main)
-    const [categories, setCategories] = useState([])
+    const [currentView, setCurrentView] = useState(main);
+    const [categories, setCategories] = useState([]);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [addCat, setAddCat] = useState("null")
-    const [addTime, setAddTime] = useState("null")
-    const [token, setToken] = useState(null)
+    const [addCat, setAddCat] = useState("null");
+    const [addTime, setAddTime] = useState("null");
+    const [token, setToken] = useState(null);
 
     const Main = () => (
         <View style={styles.container}>
             <Button
                 onPress={() => setCurrentView(addPushCat)}
                 title="Create Push"/>
+            <Text style={styles.enter}>{"\n"}</Text>
             <Button
-                onPress={() => Alert.alert(token)}
-                title="Show Token"/>
+                onPress={() => sendToken()}
+                title="Send Token"/>
         </View>
-    )
+    );
 
     const AddPushCat = () => {
         const getCategoryList = () => {
@@ -51,7 +52,7 @@ const App = () => {
                         color="black"
                     />
                 )
-        )
+        );
 
         return(
             <View style={styles.container}>
@@ -78,7 +79,7 @@ const App = () => {
                 <Text style={styles.enter}>{"\n"}</Text>
             </View>
         );
-    }
+    };
 
     const AddPushTime = () => {
         const showDatePicker = () => {
@@ -123,7 +124,7 @@ const App = () => {
                         .catch(e => Alert.alert("에러 : " + e))
                 }
             }
-        }
+        };
 
         return (
             <View>
@@ -150,45 +151,65 @@ const App = () => {
                     title="Back"/>
             </View>
         );
-    }
+    };
 
     // Firebase
-    const foregroundListener = useCallback(() => {
-        messaging().onMessage(async message => {
-            Alert.alert(message)
-        })
-    }, [])
+    // const foregroundListener = useCallback(() => {
+    //     messaging().onMessage(async message => {
+    //         console.log(message.notification.title)
+    //     })
+    // }, [])
+
+    // const checkChangeToken = useCallback( async () => {
+    //     messaging().onTokenRefresh((token) => {
+    //         setToken(token)
+    //         sendToken()
+    //     });
+    // }, []);
+
+    const sendToken = useCallback(async () => {
+        await checkToken()
+        if (getLocalToken() === null)
+            Alert.alert("토큰이 null입니다")
+        else {
+            fetch(REMEMBERME + "/token", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: getLocalToken()
+            })
+                .catch(e => Alert.alert("[sendToken 에러] " + e))
+        }
+    });
 
     const isPermitted = useCallback(async () =>
         await messaging().hasPermission() || await messaging().requestPermission()
-        , [])
+        , []);
 
-    const getLocalToken = useCallback(async () => {
-        console.log(token)
-        return token
-    }, [])
+    const getLocalToken = () => token;
 
     const setLocalToken = useCallback(async (token) =>
         setToken(token)
         , []
-    )
+    );
 
     const checkToken = useCallback(async () => {
         if (!await isPermitted())
             throw Error("FCM: Permission denied")
-        else if (!await getLocalToken()){
+        else if (token === null){
             const token = await messaging().getToken()
             if (!token)
                 throw Error("FCM: getToken() error")
-            const e = await setLocalToken(token)
-            if (e)
-                throw Error("FCM: Save token error(" + e + ")")
+            setLocalToken(token)
         }
-    })
+    });
 
     useEffect(() => {
-        foregroundListener()
-        checkToken()
+        // foregroundListener();
+        checkToken();
+        // checkChangeToken();
     }, [])
 
     return(
@@ -197,8 +218,8 @@ const App = () => {
             {currentView === addPushCat ? AddPushCat() : null}
             {currentView === addPushTime ? AddPushTime() : null}
         </View>
-    )
-};
+    );
+}
 
 const styles = StyleSheet.create({
     container:{
