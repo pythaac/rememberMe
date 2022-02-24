@@ -27,6 +27,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -64,7 +66,7 @@ public class PushService
     public void sendAllPush() throws FirebaseMessagingException
     {
         // get current time
-        LocalTime now = LocalTime.now();
+        LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         String currentTime = now.format(formatter);
 
@@ -98,7 +100,7 @@ public class PushService
             System.out.println(sendPush(token, info.getCategory(), post.getTitle(), post.getTitle(), post.getId()));
         }
 
-//        System.out.println("[" + currentTime + "] " + toSend.size() + " sent");
+        System.out.println("[" + currentTime + "] " + toSend.size() + " sent");
     }
 
     @GetMapping(value = "/test")
