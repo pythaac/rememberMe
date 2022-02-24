@@ -122,7 +122,7 @@ public class PushService
     }
 
     private Post getRandomPost(String cat){
-        String MAMACOCO = "http://192.168.1.3:8080";
+        String MAMACOCO = "http://pythaac.gonetis.com:8080";
         String url = MAMACOCO + "/rememberMe/randomPostByCategory";
         HttpEntity<String> body = new HttpEntity<>(cat);
         System.out.println("[getRandomPost] " + cat);
