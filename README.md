@@ -14,9 +14,27 @@ rememberMe는 지정한 시간에 내가 작성했던 블로그 글을 푸쉬 �
 &nbsp;  
 
 ## 푸쉬 정보 저장
+푸쉬 정보를 서버에 저장하는 과정을 나타냅니다.
+- SEND TOKEN  
+디바이스를 식별하는 FCM 토큰을 서버로 전송합니다.
+- CREATE PUSH  
+Push를 생성하기 위해 카테고리 선택창으로 이동합니다.
+- UPDATE CATEGORIES  
+Push로 받을 카테고리 리스트를 가져옵니다.
+- PICK TIME  
+Push를 받을 시간을 설정합니다.
+- SEND  
+Push 정보를 저장합니다.  
 <img src="/image/푸쉬 정보 저장.png">  
 &nbsp;  
 
 ## 푸쉬 알림
+서버에 저장된 푸쉬 정보를 활용하여 푸쉬 알림을 보내는 과정을 나타냅니다.
+- CHECK PUSH  
+Push를 보낼 정보가 있는지 확인합니다.
+- SEND PUSH  
+Push를 전송합니다.
+- READ POST  
+전송된 Push로 블로그 글을 가져옵니다.  
 <img src="/image/푸쉬 알림.png">  
 &nbsp;  
