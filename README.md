@@ -1,5 +1,6 @@
 # rememberMe
 블로그 리마인더  
+&nbsp;  
 
 <img src="/image/[0]main2.png" width="20%"></img>
 <img src="/image/[1]createPush2.png" width="20%"></img>
@@ -8,7 +9,8 @@
 <img src="/image/[4]pickTime2.png" width="20%"></img>
 <img src="/image/[5]send2.png" width="20%"></img>
 <img src="/image/[6]notification2.png" width="20%"></img>
-<img src="/image/[7]readPost2.png" width="20%"></img>
+<img src="/image/[7]readPost2.png" width="20%"></img>  
+&nbsp;  
 
 ## 요약
 rememberMe는 지정한 시간에 내가 작성했던 블로그 글을 푸쉬 알림으로 받는 어플리케이션입니다. 클라이언트에서 지정한 카테고리와 시간을 서버에 저장합니다. 서버는 매 분마다 DB에 저장된 시간과 일치하는 카테고리의 임의의 글 내용을 클라이언트로 전송합니다.  
