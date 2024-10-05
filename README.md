@@ -2,14 +2,14 @@
 블로그 리마인더  
 &nbsp;  
  
-<img src="/image/[0]main2.png" width="20%"></img>
-<img src="/image/[1]createPush2.png" width="20%"></img>
-<img src="/image/[2]updateCat2.png" width="20%"></img>
-<img src="/image/[3]selectCat2.png" width="20%"></img>
-<img src="/image/[4]pickTime2.png" width="20%"></img>
-<img src="/image/[5]send2.png" width="20%"></img>
-<img src="/image/[6]notification2.png" width="20%"></img>
-<img src="/image/[7]readPost2.png" width="20%"></img>  
+<img src="/image/%5B0%5Dmain2.png" width="20%"></img>
+<img src="/image/%5B1%5DcreatePush2.png" width="20%"></img>
+<img src="/image/%5B2%5DupdateCat2.png" width="20%"></img>
+<img src="/image/%5B3%5DselectCat2.png" width="20%"></img>
+<img src="/image/%5B4%5DpickTime2.png" width="20%"></img>
+<img src="/image/%5B5%5Dsend2.png" width="20%"></img>
+<img src="/image/%5B6%5Dnotification2.png" width="20%"></img>
+<img src="/image/%5B7%5DreadPost2.png" width="20%"></img>  
 &nbsp;  
 
 ## 요약
